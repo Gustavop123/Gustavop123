@@ -1,26 +1,170 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
-version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
-jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-    steps:
-      - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+import java.util.Scanner;
+  
+public class Main {
+  static Scanner ler = new Scanner(System.in);
+  
+  static final int total_avaliacoes = 3;
+  
+  static final String[] nome_avaliacoes = {"A1", "A2", "A3"};
+  static final double[] nota_max_avaliacoes = {30.00, 30.00, 40.00};
+  
+  static double[] notas = new double [total_avaliacoes];
 
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
-workflows:
-  say-hello-workflow:
-    jobs:
-      - say-hello
+  static void atualizarNota(int indiceNota){
+    notas[indiceNota] = lerNota(nome_avaliacoes[indiceNota], nota_max_avaliacoes[indiceNota]);
+    
+  }
+
+  static double lerNota(String mensagem, double notaMaxima){
+    double nota = 0.0;
+
+    do{
+      System.out.printf("%s = ", mensagem); // %s serve para substituir o que tem fora das aspas para dentro
+      nota = ler.nextDouble();
+    }while(nota < 0.00 || nota > notaMaxima);
+    return nota;
+  }
+
+  static void mostrarNotas(){
+    double notaFinal = 0.0;
+    System.out.println("\n\tNOTAS");
+    System.out.println();
+
+    for (int i = 0; i < total_avaliacoes; i++) {
+      System.out.printf("Avaliaçao %s = %.2f pts", nome_avaliacoes[i], notas[i]); // %s serve para substituir o que tem fora das aspas para dentro
+      System.out.println();
+      notaFinal += notas[i];
+    }
+
+    
+    System.out.printf("\n Nota Final = %.2f pts", notaFinal);
+    System.out.printf("\n Situação = %s", avaliarSituacao(notaFinal)); // %s serve para substituir o que tem fora das aspas para dentro
+    System.out.printf("\n Media = %s", calcularMedia(notaFinal));
+    System.out.printf("\n Maior nota = %s", maiorNota(nome_avaliacoes));
+    if(notaFinal < 70) {
+    	avaliacaoIntegrada(nome_avaliacoes, notaFinal);
+    }
+    
+}
+
+ 
+
+static String avaliarSituacao(double notaFinal) {
+    if(notaFinal < 30 )
+      return "REPROVADO";
+    else if(notaFinal < 70)
+      return "EM RECUPERAÇÃO";
+    else 
+      return "APROVADO";
+  }
+
+  static double calcularMedia(double notaFinal) {
+    double media;
+    media = notaFinal / 3 ;
+    return media;
+  }
+
+  static double maiorNota(String[] nome_avaliacoes){
+    double maior = 0.0;
+    
+		for(int i = 0; i < notas.length; i++){
+			if(notas[i] > maior){ 
+				maior = notas[i];
+			}
+		}
+    return maior;
+		}
+  
+  static double avaliacaoIntegrada(String[] nome_avaliacoes, double notaFinal) {
+	double AI;
+    double novaMedia = 0.0 ;
+	  if(notaFinal < 70) {
+	  System.out.println("\n Qual a nota da sua AI??");
+      AI = ler.nextDouble();
+        if(notas[0] < notas[1] && notas[0] < notas[2]){
+            
+            novaMedia = (AI + notas[1] + notas[2])/3;
+            System.out.printf("\n Sua nova media: %.2f", novaMedia);
+            if(novaMedia >= 23) {
+            	System.out.println("\n APROVADO");
+            }else {
+            	System.out.println("\n REPROVADO");
+            }
+       }
+        if( notas[1] < notas[0] && notas[1] < notas[2]){
+          
+          novaMedia = ( notas[0] + AI + notas[2])/3;
+          System.out.printf("\n Sua nova media: %.2f", novaMedia);
+          if(novaMedia >= 23) {
+          	System.out.println("\n APROVADO");
+          }else {
+          	System.out.println("\n REPROVADO");
+          }   
+     }
+        if( notas[2] < notas[0] && notas[2] < notas[1]){
+          
+          novaMedia = ( notas[0] + notas[2] + AI)/3;
+          System.out.printf("\n Sua nova media: %.2f", novaMedia);
+          if(novaMedia >= 23) {
+          	System.out.println("\n APROVADO");
+          }else {
+          	System.out.println("\n REPROVADO");
+          }
+        }
+	  }
+	
+	  return novaMedia;
+     
+  }
+  
+  static void mostrarMenu() {
+    System.out.println("\n\n");
+    System.out.println("\t\tMENU"); // \t serve para quebrar linha
+    System.out.println();
+
+    System.out.println("[1] Cadastrar Notas da A1");
+    System.out.println("[2] Cadastrar Notas da A2");
+    System.out.println("[3] Cadastrar Notas da A3");
+    System.out.println("[4] Mostrar Notas");
+    System.out.println("[0] Sair");
+
+    System.out.println("\nDigite uma opção:  ");
+    byte opcao = ler.nextByte();
+
+    switch (opcao){
+
+      case 0: 
+        System.exit(0);
+        break;
+
+      case 1: 
+        atualizarNota(0); //A1
+        break;
+
+      case 2: 
+        atualizarNota(1); //A2
+        break;
+
+      case 3: 
+        atualizarNota(2); //A3
+        break;
+
+      case 4: 
+        mostrarNotas();
+        break;
+
+      default:
+    	System.err.println("\nOpção Inválida");
+        mostrarMenu();
+    }
+    mostrarMenu();
+  }
+  
+  public static void main(String[] args) {
+	
+
+    mostrarMenu();
+    
+  }
+}
